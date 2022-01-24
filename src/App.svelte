@@ -15,6 +15,12 @@
 
   let throttle_call_jieba_cut = () => {};
 
+  const handleJquery = () => {
+    if (window.call_jieba_cut) {
+      throttle_call_jieba_cut = throttle(window.call_jieba_cut);
+    }
+  };
+
   const handle_call_jieba_cut = () => {
     throttle_call_jieba_cut = throttle(window.call_jieba_cut, 100);
   };
@@ -66,7 +72,9 @@
   />
   <script
     src="https://cdnjs.cloudflare.com/ajax/libs/cash/8.1.0/cash.min.js"></script>
-  <script src="https://pulipulichen.github.io/jieba-js/jquery.js"></script>
+  <script
+    src="https://pulipulichen.github.io/jieba-js/jquery.js"
+    on:load={handleJquery}></script>
   <script
     src="https://pulipulichen.github.io/jieba-js/require-jieba-js.js"
     on:load={handle_call_jieba_cut}></script>
