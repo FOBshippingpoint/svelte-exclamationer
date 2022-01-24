@@ -5,7 +5,8 @@
 
   let inputVal =
     "我真的不知道到底是我們跟不上時代，還是年輕人現在都是這樣講話？";
-  let outputVal;
+  let outputVal =
+    "我真的不知道到底是我們跟不上時代！還是年輕人現在都是這樣講！話！！";
   let markType = "！";
   let markNum = "1";
   let toReplace = "";
