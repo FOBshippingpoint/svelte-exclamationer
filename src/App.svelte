@@ -116,7 +116,7 @@
   <nav class="font-size-s padding-vertical-m">
     v1.0 ·
     <a
-      href="https://twitter.com/turretcss"
+      href="https://github.com/FOBshippingpoint/svelte-exclamationer"
       target="_blank"
       rel="noopener noreferrer">GitHub</a
     >
