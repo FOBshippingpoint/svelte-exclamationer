@@ -3,6 +3,8 @@
   import Output from "./Output.svelte";
   import { throttle } from "lodash-es";
 
+  let isLoading = true;
+
   let inputVal =
     "我真的不知道到底是我們跟不上時代，還是年輕人現在都是這樣講話？";
   let outputVal =
@@ -15,14 +17,14 @@
 
   let throttle_call_jieba_cut = () => {};
 
-  const handleJquery = () => {
-    if (window.call_jieba_cut) {
-      throttle_call_jieba_cut = throttle(window.call_jieba_cut);
-    }
-  };
+  let loaded = 0;
 
-  const handle_call_jieba_cut = () => {
-    throttle_call_jieba_cut = throttle(window.call_jieba_cut, 100);
+  const handleScriptLoad = () => {
+    loaded++;
+    if (loaded === 3) {
+      throttle_call_jieba_cut = throttle(window.call_jieba_cut, 100);
+      isLoading = false;
+    }
   };
 
   $: mark = markType.repeat(markNum);
@@ -71,18 +73,16 @@
     crossorigin="anonymous"
   />
   <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/cash/8.1.0/cash.min.js"></script>
-  <script
     src="https://pulipulichen.github.io/jieba-js/jquery.js"
-    on:load={handleJquery}></script>
+    on:load={handleScriptLoad}></script>
   <script
     src="https://pulipulichen.github.io/jieba-js/require-jieba-js.js"
-    on:load={handle_call_jieba_cut}></script>
-  <script src="https://unpkg.com/clipboard@2/dist/clipboard.min.js"></script>
+    on:load={handleScriptLoad}></script>
   <script
-    src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"
-    integrity="sha256-qXBd/EfAdjOA2FGrGAG+b3YBn2tn5A6bhz+LSgYD96k="
-    crossorigin="anonymous"></script>
+    data-main="https://pulipulichen.github.io/jieba-js/scripts/main"
+    src="https://pulipulichen.github.io/jieba-js/scripts/require.js"
+    on:load={handleScriptLoad}></script>
+  <script src="https://unpkg.com/clipboard@2/dist/clipboard.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -91,52 +91,59 @@
   />
 </svelte:head>
 
-<main class="margin-m flex justify-content-center">
-  <div class="max-width-xl">
-    <h1>語氣加強器</h1>
-    <hr />
-    <label for="markType" class="lead"
-      >驚嘆號種類
-      <label class="select padding-top-xs">
-        <select class="select" id="markType" bind:value={markType}>
-          <option value="！" selected> ！（全形） </option>
-          <option value="!"> !(半形) </option>
-        </select>
-      </label>
-    </label>
-    <label for="markNum" class="lead"
-      >驚嘆號數量（1~10）
-      <input
-        id="markNum"
-        type="range"
-        min="1"
-        max="10"
-        step="1"
-        bind:value={markNum}
-        {mark}
-      />
-    </label>
-    <hr />
-    <Input bind:value={inputVal} />
-    <Output value={outputVal} />
+{#if isLoading}
+  <div class="center">
+    <div class="spinner spinner-xxl" />
+    <div class="margin-top-l">Loading...</div>
   </div>
-</main>
-<footer class="background-light text-align-center">
-  <nav class="font-size-s padding-vertical-m">
-    v1.0 ·
-    <a
-      href="https://github.com/FOBshippingpoint/svelte-exclamationer"
-      target="_blank"
-      rel="noopener noreferrer">GitHub</a
-    >
-    ·
-    <a
-      href="https://www.youtube.com/channel/UC-UzF0F_qnMhwy9oB-DyWsg"
-      target="_blank"
-      rel="noopener noreferrer">YouTube</a
-    >
-  </nav>
-</footer>
+{:else}
+  <main class="margin-m flex justify-content-center">
+    <div class="max-width-xl">
+      <h1>語氣加強器</h1>
+      <hr />
+      <label for="markType" class="lead"
+        >驚嘆號種類
+        <label class="select padding-top-xs">
+          <select class="select" id="markType" bind:value={markType}>
+            <option value="！" selected> ！（全形） </option>
+            <option value="!"> !(半形) </option>
+          </select>
+        </label>
+      </label>
+      <label for="markNum" class="lead"
+        >驚嘆號數量（1~10）
+        <input
+          id="markNum"
+          type="range"
+          min="1"
+          max="10"
+          step="1"
+          bind:value={markNum}
+          {mark}
+        />
+      </label>
+      <hr />
+      <Input bind:value={inputVal} />
+      <Output value={outputVal} />
+    </div>
+  </main>
+  <footer class="background-light text-align-center">
+    <nav class="font-size-s padding-vertical-m">
+      v1.0 ·
+      <a
+        href="https://github.com/FOBshippingpoint/svelte-exclamationer"
+        target="_blank"
+        rel="noopener noreferrer">GitHub</a
+      >
+      ·
+      <a
+        href="https://www.youtube.com/channel/UC-UzF0F_qnMhwy9oB-DyWsg"
+        target="_blank"
+        rel="noopener noreferrer">YouTube</a
+      >
+    </nav>
+  </footer>
+{/if}
 
 <style>
   :global(body) {
